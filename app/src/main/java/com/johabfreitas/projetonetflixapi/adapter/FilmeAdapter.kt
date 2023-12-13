@@ -8,7 +8,9 @@ import com.johabfreitas.projetonetflixapi.databinding.ItemFilmeBinding
 import com.johabfreitas.projetonetflixapi.model.Filme
 import com.squareup.picasso.Picasso
 
-class FilmeAdapter() : RecyclerView.Adapter<FilmeAdapter.FilmeViewHolder>() {
+class FilmeAdapter(
+    val onClick:(Filme) -> Unit
+) : RecyclerView.Adapter<FilmeAdapter.FilmeViewHolder>() {
 
     private var listaFilmes: List<Filme> = emptyList()
 
@@ -32,6 +34,9 @@ class FilmeAdapter() : RecyclerView.Adapter<FilmeAdapter.FilmeViewHolder>() {
                 .into(itemFilmeBinding.imgItemFilme)
 
             itemFilmeBinding.textTitulo.text = filme.title
+            itemFilmeBinding.clItem.setOnClickListener{
+                onClick(filme)
+            }
 
             }
     }
