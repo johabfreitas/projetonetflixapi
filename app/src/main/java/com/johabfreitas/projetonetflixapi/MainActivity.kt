@@ -7,6 +7,7 @@ import android.telecom.Call.Details
 import android.util.Log
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.johabfreitas.projetonetflixapi.adapter.FilmeAdapter
 import com.johabfreitas.projetonetflixapi.api.RetrofitService
 import com.johabfreitas.projetonetflixapi.databinding.ActivityMainBinding
@@ -33,6 +34,7 @@ class MainActivity : AppCompatActivity() {
 
     var jobFilmeRecente: Job? = null
     var jobFilmePopulares: Job? = null
+    var linearLayoutManager: LinearLayoutManager? = null
     private lateinit var filmeAdapter: FilmeAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,12 +53,47 @@ class MainActivity : AppCompatActivity() {
         }
         binding.rvPopulares.adapter = filmeAdapter
 
-        binding.rvPopulares.layoutManager = LinearLayoutManager(
+        linearLayoutManager = LinearLayoutManager(
             this,
-            LinearLayoutManager.HORIZONTAL,
+            LinearLayoutManager.VERTICAL,
             false
         )
+
+        binding.rvPopulares.layoutManager = linearLayoutManager
+
+        binding.rvPopulares.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+
+                val ultimoItemVisivel = linearLayoutManager?.findLastVisibleItemPosition()
+                val totalItens = recyclerView.adapter?.itemCount
+                Log.i("recycler_test", "Ultimo: $ultimoItemVisivel, total: $totalItens")
+
+                if(ultimoItemVisivel != null && totalItens != null){
+                    if(totalItens - 1 == ultimoItemVisivel){//Chegou no último item
+                        binding.fabAdicionar.hide()
+                    }else{//Não chegou no último item
+                        binding.fabAdicionar.show()
+                    }
+                }
+
+                /*Log.i("recycler_test", "onScrolled: dx: $dx, dy: $dy")
+
+                if(dy > 0){//descendo
+                    binding.fabAdicionar.hide()
+                }else{//subindo
+                    binding.fabAdicionar.show()
+                }*/
+            }
+
+        })
     }
+
+    /*class ScrollCustomizado : RecyclerView.OnScrollListener() {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+        }
+    }*/
 
     override fun onStart() {
         super.onStart()
